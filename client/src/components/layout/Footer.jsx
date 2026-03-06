@@ -3,7 +3,7 @@ const Footer = () => {
     <footer style={footerStyle}>
       <div style={containerStyle}>
         <p>&copy; 2024 RecipeShare. All rights reserved.</p>
-        <p>Built by Sanjeev Kapoor</p>
+        <p>Built by Sahaj Srivastava</p>
       </div>
     </footer>
   );

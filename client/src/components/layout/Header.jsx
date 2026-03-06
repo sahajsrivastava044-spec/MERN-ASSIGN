@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <header style={headerStyle}>
       <div style={containerStyle}>
-        Swasth Vela 
+        RS 
         <h1 style={logoStyle}>
           <Link to="/" style={linkStyle}>
             RecipeShare
