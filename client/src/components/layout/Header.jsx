@@ -46,6 +46,7 @@ const logoStyle = {
 const linkStyle = {
   color: 'white',
   textDecoration: 'none',
+  marginLeft:'120px'
 };
 
 const navLinkStyle = {
