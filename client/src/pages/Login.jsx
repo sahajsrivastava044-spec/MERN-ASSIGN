@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   // Form field state
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
