@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLocation} from 'react-router-dom';
 
 const Login = () => {
   // Form field state
   const { login } = useAuth();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -90,17 +92,10 @@ const Login = () => {
     if (response.ok) {
       // Login successful
       
-      // 1. Store token in localStorage
-      localStorage.setItem('token', data.token);
-      
-      // 2. Store user data (optional, for display purposes)
-      localStorage.setItem('user', JSON.stringify(data.user));
+      login(data.user, data.token);
 
-      // 3. Clear form
-      setFormData({ email: '', password: '' });
-
-      // 4. Redirect to dashboard
-      navigate('/dashboard');
+      const from = location.state?.from?.pathname || "/dashboard";
+      navigate(from, { replace: true });
 
     } else {
       // Login failed

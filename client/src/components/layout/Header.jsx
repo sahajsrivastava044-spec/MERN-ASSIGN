@@ -9,7 +9,7 @@ const Header = () => {
       <div style={containerStyle}>
         <h1 style={logoStyle}>
           <Link to="/" style={linkStyle}>
-            Your Platform Name
+            RecipieShare
           </Link>
         </h1>
 

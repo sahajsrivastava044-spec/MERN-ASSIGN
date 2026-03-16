@@ -6,6 +6,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import PublicRoute from './components/common/PublicRoute';
+import EditPost from './pages/EditPost';
+import CreatePost from './pages/CreatePost';
 
 function App() {
   return (
@@ -17,16 +21,63 @@ function App() {
 
         {/* Main content area */}
         <main style={mainStyle}>
-          <Routes>
-            {/* Define your routes here */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            
-            {/* 404 Page - catches all unmatched routes */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+ <Routes>
+  {/* Public */}
+  <Route path="/" element={<Home />} />
+  <Route
+  path="/login"
+  element={
+    <PublicRoute>
+      <Login />
+    </PublicRoute>
+  }
+/>
+
+<Route
+  path="/register"
+  element={
+    <PublicRoute>
+      <Register />
+    </PublicRoute>
+  }
+/>
+  
+  {/* Protected */}
+  <Route 
+    path="/dashboard" 
+    element={
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    } 
+  />
+  
+  {/* <Route 
+    path="/profile" 
+    element={
+      <ProtectedRoute>
+        <Profile />
+      </ProtectedRoute>
+    } 
+  /> */}
+  
+  <Route 
+    path="/create" 
+    element={
+      <ProtectedRoute>
+        <CreatePost />
+      </ProtectedRoute>
+    } 
+  />
+  <Route 
+  path="/edit/:id" 
+  element={
+    <ProtectedRoute>
+      <EditPost />
+    </ProtectedRoute>
+  } 
+/>
+</Routes>
         </main>
 
         {/* Footer appears on all pages */}
