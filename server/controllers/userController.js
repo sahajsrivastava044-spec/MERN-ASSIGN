@@ -60,6 +60,7 @@ export const registerUser = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     // Fetch all users, excluding password field
+    console.log(req.query,"AHH")
     const users = await User.find().select('-password');
     
     res.status(200).json({

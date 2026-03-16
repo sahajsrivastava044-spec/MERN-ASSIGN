@@ -2,7 +2,7 @@
   "name": "creators-platform",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "client": "npm run dev --prefix client",
     "server": "npm run dev --prefix server",

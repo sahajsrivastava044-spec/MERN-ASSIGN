@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { data, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
-
+  const {login}=useAuth()
   const [formData,setFormData]=useState({
     name:'',
     email:'',
@@ -134,6 +135,8 @@ const handleSubmit = async (e) => {
     // Stop loading regardless of success/failure
     setIsLoading(false);
   }
+  login(data.user, data.token);
+  navigate("/dashboard");
 };
 
   return (
