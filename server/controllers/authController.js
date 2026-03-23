@@ -2,9 +2,9 @@ import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// @desc    Login user and return JWT
-// @route   POST /api/auth/login
-// @access  Public
+// export const refreshToken = async (req, res) => {
+//   const { refreshToken } = req.body;
+// };
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -37,21 +37,28 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    // 4. Generate JWT token
-    const token = jwt.sign(
+    // 4. Generate JWT tokens
+    const accessToken = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
+      { expiresIn: process.env.JWT_EXPIRE || '15m' } // Short-lived access token
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' } // Long-lived refresh token
     );
 
     // 5. Remove password from user object
     user.password = undefined;
 
-    // 6. Send response with token and user data
+    // 6. Send response with tokens and user data
     res.status(200).json({
       success: true,
       message: 'Login successful',
-      token,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         name: user.name,
@@ -66,6 +73,42 @@ export const loginUser = async (req, res) => {
       success: false,
       message: 'Server error during login',
       error: error.message
+    });
+  }
+};
+
+// Refresh access token
+export const refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      success: false,
+      message: 'Refresh token required'
+    });
+  }
+
+  try {
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
+
+    // Generate new access token
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE || '15m' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Token refreshed',
+      accessToken: newAccessToken
+    });
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    res.status(401).json({
+      success: false,
+      message: 'Invalid or expired refresh token'
     });
   }
 };
