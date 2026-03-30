@@ -88,11 +88,12 @@ const Login = () => {
     });
 
     const data = await response.json();
+    console.log("LOGIN RESPONSE:", data);
 
     if (response.ok) {
       // Login successful
       
-      login(data.user, data.token);
+      login(data.user, data.accessToken);
 
       const from = location.state?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
@@ -101,6 +102,7 @@ const Login = () => {
       // Login failed
       setApiError(data.message || 'Login failed. Please try again.');
     }
+
 
   } catch (error) {
     console.error('Login error:', error);
@@ -126,14 +128,6 @@ const Login = () => {
     return true;
   }
 };
-
-// Usage example:
-const token = localStorage.getItem('token');
-if (isTokenExpired(token)) {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  // Redirect to login
-}
 
   return (
   <div style={containerStyle}>
