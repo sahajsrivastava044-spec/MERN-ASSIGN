@@ -9,19 +9,15 @@ const api = axios.create({
     },
 });
 
-api.interceptors.request.use(
-    (config)=>{
-        const token = localStorage.getItem('token');
-       console.log(token,"ABC")
-        if(token){
-            config.headers.Authorization=`Bearer ${token}`;
-        }
-        return config;
-    },
-    (error)=>{
-        return Promise.reject(error);
-    }
-);
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 
 
 api.interceptors.response.use(
@@ -29,13 +25,14 @@ api.interceptors.response.use(
         return response;
     },
     (error)=>{
-        if(error.response && error.respoinse.status===401){
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+        if(error.response && error.response.status===401){
+            console.log("401 error:", error.response.data);
+            // localStorage.removeItem('token');
+            // localStorage.removeItem('user');
 
-            window.location.href='/login';
+            // window.location.href='/login';
 
-            console.log('Seddion expired. Please login again.');
+            console.log('Session expired. Please login again.');
         }
         return Promise.reject(error);
     }

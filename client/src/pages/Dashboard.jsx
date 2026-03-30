@@ -17,8 +17,9 @@ const Dashboard = () => {
     return <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" />;
+
+  if (!user || !localStorage.getItem("token")) {
+  return <Navigate to="/login" replace />;
   }
 
 
@@ -81,7 +82,8 @@ const Dashboard = () => {
     try {
       const response = await api.get(`/api/posts?page=${page}&limit=10`);
       console.log(response.data.data,"adc")
-      setPosts(response.data.data);
+      console.log("FULL RESPONSE:", response.data,"h3h32");
+      // setPosts(response.data.data);
       setPagination(response.data.pagination);
     } catch (err) {
       setError('Failed to load posts');
@@ -96,12 +98,15 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return <div >Loading posts...</div>;
+    return <div style={loadingStyle}>Loading posts...</div>;
   }
 
+console.log("USER:", user);
+console.log("TOKEN:", localStorage.getItem("token"));
 
   return (
     <div style={containerStyle}>
+      {/* Header with Logout */}
       <div style={headerStyle}>
         <h1>Welcome, {user.name}!</h1>
         <button onClick={logout} style={logoutButtonStyle}>
@@ -109,6 +114,7 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* Account Info Card */}
       <div style={contentStyle}>
         <div style={cardStyle}>
           <h2>Your Account</h2>
@@ -118,11 +124,11 @@ const Dashboard = () => {
             <p><strong>Member Since:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
           </div>
         </div>
+      </div>
 
-            <div style={containerStyle}>
-      {/* Header with Create Button */}
-      <div style={headerStyle}>
-        <h1>Welcome, {user.name}!</h1>
+      {/* Section Header with Create Button */}
+      <div style={{ marginTop: '2rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Your Posts</h2>
         <Link to="/create">
           <button style={createButtonStyle}>
             + Create New Post
@@ -146,12 +152,29 @@ const Dashboard = () => {
               <div key={post._id} style={postCardStyle}>
                 <h3>{post.title}</h3>
                 <p style={contentPreviewStyle}>
-                  {post.content.substring(0, 150)}...
+                  {post?.content && typeof post.content === "string"
+                    ? post.content.slice(0, 150)
+                    : "No content available"}
                 </p>
                 <div style={metaStyle}>
-                  <span>{post.category}</span>
-                  <span>{post.status}</span>
+                  <span><strong>Category:</strong> {post.category}</span>
+                  <span><strong>Status:</strong> {post.status}</span>
                   <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={actionsStyle}>
+                  <Link to={`/edit/${post._id}`}>
+                    <button style={editButtonStyle}>
+                      Edit
+                    </button>
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(post._id)}
+                    style={deleteButtonStyle}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))}
@@ -160,8 +183,8 @@ const Dashboard = () => {
             <div style={paginationStyle}>
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
-                disabled={!pagination.hasPrevPage}
-                style={paginationButtonStyle}
+                disabled={!pagination?.hasPrevPage}
+                style={{...paginationButtonStyle, opacity: !pagination?.hasPrevPage ? 0.5 : 1}}
               >
                 Previous
               </button>
@@ -174,33 +197,13 @@ const Dashboard = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={!pagination.hasNextPage}
-                style={paginationButtonStyle}
+                style={{...paginationButtonStyle, opacity: !pagination.hasNextPage ? 0.5 : 1}}
               >
                 Next
               </button>
             </div>
           </>
         )}
-      </div>
-    </div>
-          <div style={postsContainerStyles}>
-        {posts.map((post) => (
-          <div key={post._id} style={postCardStyle}>
-            <h3>{post.title}</h3>
-            <p>{post.content.substring(0, 150)}...</p>
-            
-            {/* Action Buttons */}
-            <div style={actionsStyle}>
-              <button 
-                onClick={() => handleDelete(post._id)}
-                style={deleteButtonStyle}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
       </div>
     </div>
   );
@@ -266,16 +269,22 @@ const deleteButtonStyle = {
   cursor: 'pointer',
 };
 
+const editButtonStyle = {
+  padding: '0.5rem 1rem',
+  backgroundColor: '#007bff',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  textDecoration: 'none',
+};
 
-// const editButtonStyle = {
-//   padding: '0.5rem 1rem',
-//   backgroundColor: '#007bff',
-//   color: 'white',
-//   border: 'none',
-//   borderRadius: '5px',
-//   cursor: 'pointer',
-//   textDecoration: 'none',
-// };
+const loadingStyle = {
+  textAlign: 'center',
+  padding: '2rem',
+  fontSize: '1.1rem',
+  color: '#555',
+};
 
 const paginationStyle = {
   display: 'flex',
