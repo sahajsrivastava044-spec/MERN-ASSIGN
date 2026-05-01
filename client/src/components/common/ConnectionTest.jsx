@@ -54,8 +54,8 @@ const ConnectionTest = () => {
       )}
 
       <div style={infoStyle}>
-        <p><strong>Backend URL:</strong> http://localhost:5000</p>
-        <p><strong>Frontend URL:</strong> http://localhost:5173</p>
+        <p><strong>Backend URL:</strong> https://creator-platform-api-1.onrender.com</p>
+        <p><strong>Frontend URL:</strong> creators-platform-ashen.vercel.app</p>
         <p><strong>Using:</strong> Vite Proxy</p>
       </div>
     </div>
