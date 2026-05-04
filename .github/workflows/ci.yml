@@ -8,6 +8,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6
+        options: >-
+          --health-cmd mongosh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,6 +27,8 @@ jobs:
         run: npm run install-all
 
       - name: Run tests
+        env:
+          MONGODB_URI_TEST: "mongodb://localhost:27017/creator-platform-test"
         run: npm test
 
   deploy:
@@ -28,8 +41,8 @@ jobs:
 
       - name: Render Deployment (via Deploy Hook)
         run: |
-          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_<PROJECT_ID>/<DEPLOY_HOOK_ID>" \
-          -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}"
+          curl -X POST "https://api.render.com/deploy/srv_<SERVICE_ID>?key=<DEPLOY_KEY>" \
+          -H "Authorization: Bearer ${{ secrets.RENDER_TOKEN }}"
 
       - name: Vercel Deployment (via CLI)
         run: |
