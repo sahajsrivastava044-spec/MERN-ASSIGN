@@ -22,7 +22,16 @@ const userSchema=mongoose.Schema({
         required:[true,'password is required'],
         minLength:[6,'password must atleast be of 6 characters'],
         select:false
-    }
+    },
+    dietaryPreferences:{
+        type:String,
+        enum:['vegetarian','vegan','non-vegetarian','not-declared']
+    },
+    skillLevel:{
+        type:String,
+        enum:['beginner','intermediate','advanced']
+    },
+    favoriteCuisines:[]
 },
 {timestamps:true}
 );
