@@ -33,4 +33,12 @@ const update=async({id,name,email})=>{
     return user;
 }
 
-module.exports={register,fetchUsers,update};
+const checkMail=async({email})=>{
+    const user = await User.findOne({email});
+    if(user){
+        throw new Error("This E-mail is already in use")
+    };
+    return user;
+}
+
+module.exports={register,fetchUsers,update,checkMail};

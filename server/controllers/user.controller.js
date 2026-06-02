@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const { register, fetchUsers } = require("../services/user.service");
+const { register, fetchUsers, checkMail } = require("../services/user.service");
 
 const registerUser=async(req,res)=>{
     try{
@@ -28,6 +28,16 @@ const updateUser=async(req,res)=>{
         const {id}=req.params;
         const {name,email}=req.body;
     } catch (error) {
-        
+        res.status(500).json({"🔴Error":error})
     }
+}
+
+const checkEmail=async(req,res)=>{
+
+        const {email}=req.params;
+        const eligible=await checkMail(email);
+        if(eligible){
+            return res.status(200).json({message:"Email available"})
+        }
+        return res.status(400).json({message:"Email already in use"});
 }
